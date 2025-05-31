@@ -1,4 +1,4 @@
-#include <DS18B20.h>
+#include "DS18B20.h"
 
 DS18B20::DS18B20(uint8_t pin) :
     oneWire(OneWire(pin)),
@@ -103,6 +103,8 @@ uint8_t DS18B20::getResolution() {
             return 11;
         case RES_12_BIT:
             return 12;
+        default: 
+            return 0; 
     }
     return 0;
 }
