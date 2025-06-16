@@ -47,21 +47,34 @@ uint8_t DS18B20::selectNext() {
     return 0;
 }
 
-uint8_t DS18B20::selectNextAlarm() {
-    if (oneWireSearch(ALARM_SEARCH)) {
+uint8_t DS18B20::selectNextAlarm() 
+{
+    if (oneWireSearch(ALARM_SEARCH)) 
+    {
         return select(searchAddress);
     }
 
     return 0;
 }
 
-void DS18B20::resetSearch() {
+void DS18B20::resetSearch() 
+{
     lastDiscrepancy = 0;
     lastDevice = 0;
 }
 
-float DS18B20::getTempC() {
-    readScratchpad();
+/**
+ * Eliminated the unnecessary second scratchpad read, which didn't check the 
+ * CRC. Before calling, call doConversation(). Then iterate the sensors with 
+ * select(); getTempC(). 
+ * 
+ * - select(); will return 0 if the CRC failed. Previously getTempC() did a second read 
+ * which ignored the CRC. 
+ * - separating out doConversation() allowed bulk reads while not wasting n-1 
+ * conversions. This saves a lot of time when reading multiple sensors. 
+ */ 
+float DS18B20::getTempC() 
+{
     uint8_t lsb = selectedScratchpad[TEMP_LSB];
     uint8_t msb = selectedScratchpad[TEMP_MSB];
 
